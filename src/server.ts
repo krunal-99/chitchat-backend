@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 dotenv.config();
 import authRoute from "./routes/auth";
+import messageRoute from "./routes/message";
 const app = express();
 app.use(cookieParser());
 const PORT = process.env.PORT;
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoute);
+app.use("/messages", messageRoute);
 
 AppDataSource.initialize()
   .then(() => {
