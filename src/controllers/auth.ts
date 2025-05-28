@@ -4,6 +4,33 @@ import argon2 from "argon2";
 import { User } from "../entities/User";
 import jwt from "jsonwebtoken";
 
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await userRepo.find({
+      order: { id: "ASC" },
+      select: ["id", "user_name", "email", "image_url", "is_online"],
+    });
+    if (users) {
+      res.status(200).json({
+        status: "success",
+        message: "Users fetched successfully",
+        users,
+      });
+    } else {
+      res.status(404).json({
+        status: "failed",
+        message: "No users found",
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({
+      status: "failed",
+      message: "Internal server error",
+    });
+  }
+};
+
 export const register = async (req: Request, res: Response) => {
   try {
     const {

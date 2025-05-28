@@ -1,9 +1,10 @@
 import { Router, Request, Response } from "express";
 import { authMiddleware } from "../middlewares/auth";
-import { login, register } from "../controllers/auth";
+import { getAllUsers, login, register } from "../controllers/auth";
 
 const router = Router();
 
+router.get("/", getAllUsers);
 router.post("/register", register);
 router.post("/login", login);
 router.post("/verify", authMiddleware, async (req: Request, res: Response) => {
