@@ -5,7 +5,8 @@ import { getMessagesBetweenUsers, sendMessage } from "../controllers/message";
 const router = Router();
 
 router
-  .get("/", authMiddleware, getMessagesBetweenUsers)
-  .post("/", authMiddleware, sendMessage);
+  .route("/")
+  .get(authMiddleware, getMessagesBetweenUsers)
+  .post(authMiddleware, sendMessage);
 
 export default router;

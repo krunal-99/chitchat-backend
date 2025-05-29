@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { userRepo } from "../utils/constants";
+import { conversationRepo, userRepo } from "../utils/constants";
 import argon2 from "argon2";
 import { User } from "../entities/User";
 import jwt from "jsonwebtoken";
@@ -21,31 +21,47 @@ declare global {
 }
 
 export const getAllUsers = async (req: Request, res: Response) => {
-  const user = req.user;
+  const userId = req.user?.id;
   try {
     const users = await userRepo.find({
-      where: { id: Not(user!.id) },
+      where: { id: Not(Number(userId)) },
       order: { id: "ASC" },
       select: ["id", "user_name", "email", "image_url", "is_online"],
     });
-    if (users) {
-      res.status(200).json({
-        status: "success",
-        message: "Users fetched successfully",
-        users,
-      });
-    } else {
-      res.status(404).json({
-        status: "failed",
-        message: "No users found",
-      });
-    }
+    const conversations = await conversationRepo.find({
+      where: [{ user1: { id: userId } }, { user2: { id: userId } }],
+      relations: ["user1", "user2"],
+    });
+
+    const usersWithLastMessage = users.map((user) => {
+      const conversation = conversations.find(
+        (conv) =>
+          (conv.user1.id === userId && conv.user2.id === user.id) ||
+          (conv.user1.id === user.id && conv.user2.id === userId)
+      );
+      return {
+        id: user.id,
+        user_name: user.user_name,
+        image_url: user.image_url,
+        is_online: user.is_online,
+        email: user.email,
+        last_message: conversation?.last_message || null,
+        last_message_time: conversation?.last_message_time || null,
+      };
+    });
+
+    res.status(200).json({
+      status: "success",
+      users: usersWithLastMessage,
+    });
+    return;
   } catch (error) {
     console.error("Error fetching users:", error);
     res.status(500).json({
-      status: "failed",
+      status: "error",
       message: "Internal server error",
     });
+    return;
   }
 };
 

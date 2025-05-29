@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { messageRepo } from "../utils/constants";
+import { conversationRepo, messageRepo } from "../utils/constants";
 
 export const getMessagesBetweenUsers = async (req: Request, res: Response) => {
   const userId = req.user?.id;
@@ -60,16 +60,38 @@ export const sendMessage = async (req: Request, res: Response) => {
       text,
       timestamp: new Date(),
     });
-    await messageRepo.save(message);
+    const savedMessage = await messageRepo.save(message);
+
+    let conversation = await conversationRepo.findOne({
+      where: [
+        { user1: { id: senderId }, user2: { id: receiverId } },
+        { user1: { id: receiverId }, user2: { id: senderId } },
+      ],
+    });
+
+    if (!conversation) {
+      conversation = conversationRepo.create({
+        user1: { id: senderId },
+        user2: { id: receiverId },
+        last_message: text,
+        last_message_time: new Date(),
+      });
+    } else {
+      conversation.last_message = text;
+      conversation.last_message_time = new Date();
+    }
+
+    await conversationRepo.save(conversation);
+
     res.status(201).json({
       status: "success",
       message: "Message sent successfully",
       data: {
-        id: message.id,
-        senderId: message.sender.id,
-        receiverId: message.receiver.id,
-        text: message.text,
-        timestamp: message.timestamp,
+        id: savedMessage.id,
+        senderId: savedMessage.sender.id,
+        receiverId: savedMessage.receiver.id,
+        text: savedMessage.text,
+        timestamp: savedMessage.timestamp,
       },
     });
   } catch (error) {
