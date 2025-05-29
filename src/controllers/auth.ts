@@ -3,10 +3,29 @@ import { userRepo } from "../utils/constants";
 import argon2 from "argon2";
 import { User } from "../entities/User";
 import jwt from "jsonwebtoken";
+import { Not } from "typeorm";
+
+interface UserDetails {
+  id: number;
+  user_name: string;
+  email: string;
+  image_url: string;
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: UserDetails;
+    }
+  }
+}
 
 export const getAllUsers = async (req: Request, res: Response) => {
+  const user = req.user;
+  console.log("user", user);
   try {
     const users = await userRepo.find({
+      where: { id: Not(user!.id) },
       order: { id: "ASC" },
       select: ["id", "user_name", "email", "image_url", "is_online"],
     });

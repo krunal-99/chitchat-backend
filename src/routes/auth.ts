@@ -4,7 +4,7 @@ import { getAllUsers, login, register } from "../controllers/auth";
 
 const router = Router();
 
-router.get("/", getAllUsers);
+router.get("/", authMiddleware, getAllUsers);
 router.post("/register", register);
 router.post("/login", login);
 router.post("/verify", authMiddleware, async (req: Request, res: Response) => {
