@@ -22,7 +22,6 @@ declare global {
 
 export const getAllUsers = async (req: Request, res: Response) => {
   const user = req.user;
-  console.log("user", user);
   try {
     const users = await userRepo.find({
       where: { id: Not(user!.id) },

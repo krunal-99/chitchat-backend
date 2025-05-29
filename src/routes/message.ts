@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { getAllMessages } from "../controllers/message";
+import { authMiddleware } from "../middlewares/auth";
+import { getMessagesBetweenUsers } from "../controllers/message";
 
 const router = Router();
 
-router.get("/", getAllMessages);
+router.get("/", authMiddleware, getMessagesBetweenUsers);
 
 export default router;
