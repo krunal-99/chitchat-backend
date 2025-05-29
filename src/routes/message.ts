@@ -1,9 +1,11 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/auth";
-import { getMessagesBetweenUsers } from "../controllers/message";
+import { getMessagesBetweenUsers, sendMessage } from "../controllers/message";
 
 const router = Router();
 
-router.get("/", authMiddleware, getMessagesBetweenUsers);
+router
+  .get("/", authMiddleware, getMessagesBetweenUsers)
+  .post("/", authMiddleware, sendMessage);
 
 export default router;
