@@ -17,7 +17,7 @@ app.use(cookieParser());
 const PORT = process.env.PORT || 4000;
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: process.env.API_URL,
     credentials: true,
   })
 );
@@ -31,7 +31,7 @@ const server = createServer(app);
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.API_URL,
     methods: ["GET", "POST"],
     credentials: true,
   },
