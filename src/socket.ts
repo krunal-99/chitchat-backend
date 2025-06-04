@@ -50,47 +50,6 @@ export const initializeSocket = (io: Server) => {
 
       socket.join(`user:${socket.data.userId}`);
 
-      socket.on("setup", async () => {
-        try {
-          const users = await userRepo.find({
-            where: { id: Not(socket.data.userId!) },
-            select: ["id", "user_name", "image_url", "is_online"],
-          });
-          const usersWithMessages = await Promise.all(
-            users.map(async (user) => {
-              const conversation = await conversationRepo.findOne({
-                where: [
-                  {
-                    user1: { id: socket.data.userId! },
-                    user2: { id: user.id },
-                  },
-                  {
-                    user1: { id: user.id },
-                    user2: { id: socket.data.userId! },
-                  },
-                ],
-                select: ["id", "last_message", "last_message_time"],
-              });
-              return {
-                id: user.id,
-                user_name: user.user_name,
-                image_url: user.image_url,
-                is_online: user.is_online,
-                last_message: conversation?.last_message || null,
-                last_message_time: conversation?.last_message_time || null,
-              };
-            })
-          );
-          socket.emit("users", usersWithMessages);
-        } catch (error) {
-          console.error(
-            `Error in setup for user ${socket.data.userId}:`,
-            error
-          );
-          socket.emit("error", { message: "Failed to fetch users" });
-        }
-      });
-
       socket.on("joinChat", (receiverId: number) => {
         const room = [socket.data.userId!, receiverId].sort().join(":");
         socket.join(room);
