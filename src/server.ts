@@ -9,9 +9,7 @@ import { createServer } from "http";
 import authRoute from "./routes/auth";
 import messageRoute from "./routes/message";
 import { initializeSocket } from "./socket";
-
 dotenv.config();
-
 const app = express();
 app.use(cookieParser());
 const PORT = process.env.PORT || 4000;

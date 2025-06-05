@@ -1,6 +1,5 @@
 import { Server, Socket } from "socket.io";
 import jwt from "jsonwebtoken";
-import { Not } from "typeorm";
 import { conversationRepo, messageRepo, userRepo } from "./utils/constants";
 
 interface DecodedToken {

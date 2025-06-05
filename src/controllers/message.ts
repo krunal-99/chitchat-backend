@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { conversationRepo, messageRepo } from "../utils/constants";
+import { messageRepo } from "../utils/constants";
 
 export const getMessagesBetweenUsers = async (req: Request, res: Response) => {
   const userId = req.user?.id;
