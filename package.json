@@ -13,11 +13,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@langchain/core": "^0.3.59",
+    "@langchain/google-genai": "^0.2.13",
     "argon2": "^0.43.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "langchain": "^0.3.28",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.1",
     "typeorm": "^0.3.24"

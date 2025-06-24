@@ -8,6 +8,7 @@ import { Server } from "socket.io";
 import { createServer } from "http";
 import authRoute from "./routes/auth";
 import messageRoute from "./routes/message";
+import aiRoute from "./routes/ai";
 import { initializeSocket } from "./socket";
 dotenv.config();
 const app = express();
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoute);
 app.use("/messages", messageRoute);
+app.use("/api/ai", aiRoute);
 
 const server = createServer(app);
 const io = new Server(server, {
