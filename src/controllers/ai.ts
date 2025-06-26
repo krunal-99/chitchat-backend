@@ -130,12 +130,18 @@ export const messageIntelligence = async (req: Request, res: Response) => {
       new HumanMessage(message),
     ];
 
-    const response = await model.invoke(messages);
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Transfer-Encoding", "chunked");
 
-    res.json({
-      response: response.content,
-      success: true,
-    });
+    const stream = await model.stream(messages);
+    console.log("stream", stream);
+    for await (const chunk of stream) {
+      if (chunk && chunk.content) {
+        console.log("chunk.content", chunk.content);
+        res.write(chunk.content);
+      }
+    }
+    res.end();
   } catch (error) {
     console.error("AI Error:", error);
     res.status(500).json({
